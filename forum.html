@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="styles/chatroom.css">
+    <title>Beanos ChatRoom</title>
+    <style>
+  
+
+      #form {border-radius: 2rem; margin-left: 20%; background: rgb(0, 0, 0); padding: 0.25rem; position: fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
+      #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
+      #input:focus { outline: none; }
+      #form > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
+
+      #messages { list-style-type: none; padding: 0; position: absolute; margin-left: 20%;}
+      #messages > li { }
+      #messages > li:nth-child(odd) { background: #efefef; width: 1525px;}
+      
+      #container {width: 15%; margin-left: 1%;}
+    </style>
+  </head>
+
+  <body>
+    <ul id="messages"></ul>
+    <form id="form" action="">
+      <input id="input" autocomplete="off" /><button>Send</button>
+    </form>
+
+    <div id="container">
+
+      <div class="list">
+        <a >
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          Channels
+        </a>
+      </div>
+
+      <div class="create">
+        <a>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          Create a channel
+        </a>
+      </div>
+
+      <div class="quit">
+        <a href="#">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          Quit a channel
+        </a>
+      </div>
+      
+      <div class="join">
+        <a href="#">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          Join a channel
+        </a>
+      </div>
+      
+      <a href="username.html">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        Quit
+      </a>
+    </div>
+      
+      
+    </body>
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script> 
+        var username = getUrlVars()["username"];
+        var socket = io();
+        var messages = document.getElementById('messages');
+        var form = document.getElementById('form');
+        var input = document.getElementById('input');
+
+        form.addEventListener('submit', function(e) {
+          socket.emit('nickname', username);
+          e.preventDefault();  
+            if (input.value) {
+              console.log(input.value);
+              if (input.value[0] == '/') {
+                var words = input.value.split(" ");
+                if (words[0] == "/nick") {
+                  socket.emit('nickname', words[1]);
+                }
+                if (words[0] == "/create") {
+                  socket.emit('create', words[1]);
+                }
+                if (words[0] == "/list") {
+                  socket.emit('list');
+                }
+                if (words[0] == "/join") {
+                  socket.emit('join', words[1]);
+                }
+                if (words[0] == "/quit") {
+                  socket.emit('quit', words[1]);
+                }
+              }else {
+              socket.emit('chat message', input.value);
+              input.value = '';
+              }
+            }
+        });
+
+        socket.on('chat message', function(msg) {
+            var item = document.createElement('li');
+            item.textContent = msg;
+            messages.appendChild(item);
+            window.scrollTo(0, document.body.scrollHeight);
+        });
+
+        function getUrlVars() {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        vars[key] = value;
+    });
+    return vars;
+}
+$('.create').click(function() {
+  console.log("TEST")
+    var value = "/create"
+    var input = $('#input');
+    input.val(value);
+    return false;
+});
+$('.list').click(function() {
+  console.log("TEST")
+    var value = "/list"
+    var input = $('#input');
+    input.val(value);
+    return false;
+});
+
+$('.quit').click(function() {
+  console.log("TEST")
+    var value = "/quit"
+    var input = $('#input');
+    input.val(value);
+    return false;
+});
+
+$('.join').click(function() {
+  console.log("TEST")
+    var value = "/join"
+    var input = $('#input');
+    input.val(value);
+    return false;
+});
+
+    </script>
+</html>
